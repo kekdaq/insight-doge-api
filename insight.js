@@ -18,6 +18,13 @@ var logger = require('./lib/logger').logger;
 program
   .version(config.version);
 
+//listen and respond to heartbeat request from parent
+process.on('message', function(message) {
+  if(message && message.request === 'heartbeat') {
+    process.send({heartbeat: 'thump'});
+  }
+});
+
 // text title
 console.log(
   '\n\
@@ -96,7 +103,9 @@ walk(models_path);
 
 // p2pSync process
 var peerSync = new PeerSync({
-  shouldBroadcast: true
+  shouldBroadcast: true,
+  verbose: true,
+  logger: logger
 });
 
 if (!config.disableP2pSync) {
@@ -159,8 +168,35 @@ if (config.enablePublicInfo) {
 require('./config/express')(expressApp, historicSync, peerSync);
 require('./config/routes')(expressApp);
 
+if (typeof Object.assign != 'function') {
+    Object.assign = function (target, varArgs) {
+        'use strict';
+        if (target == null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+        var to = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var nextSource = arguments[index];
+
+            if (nextSource != null) {
+                for (var nextKey in nextSource) {
+                    if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
+            }
+         }
+         return to;
+    };
+}
 
 //Start the app by listening on <port>
+server.timeout = 0;
+server.on('clientError', function(err, socket) {
+  logger.info('insight server clientError', err);
+  socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+});
+
 server.listen(config.port, function() {
   logger.info('insight server listening on port %d in %s mode', server.address().port, process.env.NODE_ENV);
 });
