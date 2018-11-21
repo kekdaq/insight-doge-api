@@ -55,7 +55,7 @@
     "base58-native": "0.1.2",
     "bignum": "*",
     "bitauth": "^0.1.1",
-    "bitcore": "git://github.com/kekdaq/pepecore/commit/9d96e769ad996b3b9408846feaaf7bea051502cd",
+    "bitcore": "git://github.com/kekdaq/pepecore#9d96e769ad996b3b9408846feaaf7bea051502cd",
     "bufferput": "git://github.com/bitpay/node-bufferput.git",
     "buffertools": "*",
     "commander": "^2.3.0",
