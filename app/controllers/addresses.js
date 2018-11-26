@@ -1,4 +1,5 @@
 'use strict';
+var HistoricSync = require('../../lib/HistoricSync');
 
 /**
  * Module dependencies.
@@ -62,6 +63,16 @@ exports.show = function(req, res, next) {
 exports.utxo = function(req, res, next) {
   var a = getAddr(req, res, next);
   if (a) {
+//var historicSync = new HistoricSync({
+//  shouldBroadcastSync: true
+//})
+//    historicSync.start({}, function(err) {
+//      if (err) {
+//        var txt = 'ABORTED with error: ' + err.message;
+//        console.log('[historic_sync] ' + txt);
+//      }
+//  })
+
     a.update(function(err) {
       if (err)
         return common.handleErrors(err, res);
