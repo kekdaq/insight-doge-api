@@ -21,19 +21,20 @@ function getUserHome() {
 
 var home = process.env.INSIGHT_DB || (getUserHome() + '/.insight');
 
-if (process.env.INSIGHT_NETWORK === 'livenet') {
-  env = 'livenet';
-  db = home;
-  port = '3000';
-  b_port = '29376';
-  p2p_port = '29377';
-} else {
+if (process.env.INSIGHT_NETWORK === 'testnet') {
   env = 'testnet';
   db = home + '/testnet';
   port = '3001';
   b_port = '18332';
   p2p_port = '18333';
+} else {
+  env = 'livenet';
+  db = home;
+  port = '3000';
+  b_port = '29376';
+  p2p_port = '29377';
 }
+
 port = parseInt(process.env.INSIGHT_PORT) || port;
 
 
@@ -44,32 +45,36 @@ switch (process.env.NODE_ENV) {
   case 'test':
     env += ' - test environment';
     break;
-  default:
+  case 'development':
     env += ' - development';
+    break;
+  default:
+    env += '';
     break;
 }
 
-var network = process.env.INSIGHT_NETWORK || 'testnet';
+
+var network = process.env.INSIGHT_NETWORK || 'livenet';
 
 var dataDir = process.env.BITCOIND_DATADIR;
 var isWin = /^win/.test(process.platform);
 var isMac = /^darwin/.test(process.platform);
 var isLinux = /^linux/.test(process.platform);
 if (!dataDir) {
-  if (isWin) dataDir = '%APPDATA%\\PepeCoin\\';
-  if (isMac) dataDir = process.env.HOME + '/Library/Application Support/PepeCoin/';
+  if (isWin) dataDir = '%APPDATA%\\Bitcoin\\';
+  if (isMac) dataDir = process.env.HOME + '/Library/Application Support/Bitcoin/';
   if (isLinux) dataDir = process.env.HOME + '/.pepecoin/';
 }
 dataDir += network === 'testnet' ? 'testnet3' : '';
 
-var safeConfirmations = process.env.INSIGHT_SAFE_CONFIRMATIONS || 6;
-var ignoreCache = process.env.INSIGHT_IGNORE_CACHE || 0;
+var safeConfirmations = process.env.INSIGHT_SAFE_CONFIRMATIONS || 20;
+var ignoreCache = process.env.INSIGHT_IGNORE_CACHE || 1;
 
 
 var bitcoindConf = {
   protocol: process.env.BITCOIND_PROTO || 'http',
-  user: process.env.BITCOIND_USER || 'user',
-  pass: process.env.BITCOIND_PASS || 'pass',
+  user: process.env.BITCOIND_USER || 'pepeuser',
+  pass: process.env.BITCOIND_PASS || 'peperpcpass',
   host: process.env.BITCOIND_HOST || '127.0.0.1',
   port: process.env.BITCOIND_PORT || b_port,
   p2pPort: process.env.BITCOIND_P2P_PORT || p2p_port,
@@ -82,11 +87,11 @@ var bitcoindConf = {
 var enableMonitor = process.env.ENABLE_MONITOR === 'true';
 var enableCleaner = process.env.ENABLE_CLEANER === 'true';
 var enableMailbox = process.env.ENABLE_MAILBOX === 'true';
-var enableRatelimiter = process.env.ENABLE_RATELIMITER === 'true';
+var enableRatelimiter = process.env.ENABLE_RATELIMITER === 'false';
 var enableCredentialstore = process.env.ENABLE_CREDSTORE === 'true';
 var enableEmailstore = process.env.ENABLE_EMAILSTORE === 'true';
 var enablePublicInfo = process.env.ENABLE_PUBLICINFO === 'true';
-var loggerLevel = process.env.LOGGER_LEVEL || 'info';
+var loggerLevel = process.env.LOGGER_LEVEL || 'debug';
 var enableHTTPS = process.env.ENABLE_HTTPS === 'true';
 
 if (!fs.existsSync(db)) {
@@ -130,4 +135,6 @@ module.exports = {
   },
   safeConfirmations: safeConfirmations, // PLEASE NOTE THAT *FULL RESYNC* IS NEEDED TO CHANGE safeConfirmations
   ignoreCache: ignoreCache,
+//  forceRPC: true
+  forceRPC: false
 };
