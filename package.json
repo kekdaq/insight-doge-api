@@ -1,5 +1,5 @@
 {
-  "name": "insight-bitcore-api",
+  "name": "insight-pepe-api",
   "description": "An open-source bitcoin blockchain API. The Insight API provides you with a convenient, powerful and simple way to query and broadcast data on the bitcoin network and build your own services with it.",
   "version": "0.2.11",
   "author": {
@@ -51,7 +51,7 @@
     "start": "node node_modules/grunt-cli/bin/grunt"
   },
   "dependencies": {
-    "async": "*",
+    "async": "2.5.0",
     "base58-native": "0.1.2",
     "bignum": "*",
     "bitauth": "^0.1.1",
